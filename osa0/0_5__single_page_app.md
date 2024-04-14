@@ -1,3 +1,5 @@
+```mermaid
+
 sequenceDiagram
 participant browser
 participant server
@@ -21,3 +23,5 @@ participant server
     activate server
     server-->>browser: application/json 200 OK
     deactivate server
+
+```
