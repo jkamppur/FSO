@@ -1,3 +1,7 @@
+Uuden muistiipanon lisäys singla page app
+
+```mermaid
+
 sequenceDiagram
 participant browser
 participant server
@@ -6,3 +10,5 @@ participant server
     activate server
     server-->>browser: application/json 201 Created
     deactivate server
+
+```
