@@ -15,12 +15,20 @@ const App = () => {
     )
   }
 
+  const Part = (props) => {
+    return (
+      <>
+        <p> {props.name} {props.exercises} </p>
+      </>
+    )
+  }
+
   const Content = (props) => {
     return (
       <div>
-        <p> {props.part1} {props.exer1} </p>
-        <p> {props.part2} {props.exer2} </p>
-        <p> {props.part3} {props.exer3} </p>
+        <Part name={props.part1} exercises={props.exer1} />
+        <Part name={props.part2} exercises={props.exer2} />
+        <Part name={props.part3} exercises={props.exer3} />
       </div>
     )
   }
@@ -43,5 +51,3 @@ const App = () => {
 }
 
 export default App
-
-
