@@ -1,4 +1,4 @@
-Uuden muistiipanon lisäys singla page app
+Uuden muistiipanon lisäys single page app
 
 ```mermaid
 
