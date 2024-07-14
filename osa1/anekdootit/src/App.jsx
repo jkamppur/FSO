@@ -1,4 +1,4 @@
-// teht 1.13*
+// teht 1.14*
 
 import { useState } from 'react'
 
@@ -14,15 +14,13 @@ const App = () => {
     'The only way to go fast, is to go well.'
   ]
 
-  var maxAnec = anecdotes.length-1
-
   const [votes, setVotes] = useState(new Uint8Array(anecdotes.length))
-
   const randomNumberInRange = (min, max) => {
     return Math.floor(Math.random()
-        * (max - min + 1)) + min;
+    * (max - min + 1)) + min;
   };
 
+  var maxAnec = anecdotes.length-1
   const [selected, setSelected] = useState(randomNumberInRange(0, maxAnec))
 
   const Button = (props) => (
@@ -33,19 +31,38 @@ const App = () => {
     var copy = [...votes]
     copy[vote] += 1
     setVotes(copy)
-    console.log("handle vote: ", copy)
   }
 
+  const Statistics = (props) => {
+    var maxVotes = Math.max(...props.votes)
+    var maxVotesIndex = [props.votes.indexOf(maxVotes)]
+
+    return (
+      <div>
+        <h2>Anecdote with most votes</h2>
+        <div>{props.anecdotes[maxVotesIndex]}</div>
+        <div>has {maxVotes} votes</div>
+      </div>
+    )
+  }
+
+  const Anecdotes = (props) => {
+    return (
+      <div>
+      <h2>Anecdote of the day</h2>
+        <div>{props.anecdotes[props.selected]}</div>
+        <div>has {props.votes[props.selected]} votes </div>
+      </div>
+    )
+  }
 
   return (
     <div>
-      <div>
-        <p>{anecdotes[selected]}</p>
-        <p>has {votes[selected]} votes </p>
-      </div>
+      <Anecdotes anecdotes={anecdotes} votes={votes} selected={selected}/>
       <Button handleClick={() => HandleVote(selected)} text="vote"/>
       <Button handleClick={() => setSelected(randomNumberInRange(0, maxAnec))} text="next anecdote"/>
-    </div>
+      <Statistics votes={votes} anecdotes={anecdotes}/>
+  </div>
   )
 }
 
