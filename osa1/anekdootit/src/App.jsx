@@ -1,4 +1,4 @@
-// teht 1.12*
+// teht 1.13*
 
 import { useState } from 'react'
 
@@ -16,6 +16,8 @@ const App = () => {
 
   var maxAnec = anecdotes.length-1
 
+  const [votes, setVotes] = useState(new Uint8Array(anecdotes.length))
+
   const randomNumberInRange = (min, max) => {
     return Math.floor(Math.random()
         * (max - min + 1)) + min;
@@ -24,15 +26,25 @@ const App = () => {
   const [selected, setSelected] = useState(randomNumberInRange(0, maxAnec))
 
   const Button = (props) => (
-    <button onClick={props.handleClick}>Next anecdote</button>
+    <button onClick={props.handleClick}> {props.text}</button>
   )
- 
+
+  const HandleVote = (vote) => {
+    var copy = [...votes]
+    copy[vote] += 1
+    setVotes(copy)
+    console.log("handle vote: ", copy)
+  }
+
+
   return (
     <div>
       <div>
-        {anecdotes[selected]}
+        <p>{anecdotes[selected]}</p>
+        <p>has {votes[selected]} votes </p>
       </div>
-      <Button number={selected} handleClick={() => setSelected(randomNumberInRange(0, maxAnec))}/>
+      <Button handleClick={() => HandleVote(selected)} text="vote"/>
+      <Button handleClick={() => setSelected(randomNumberInRange(0, maxAnec))} text="next anecdote"/>
     </div>
   )
 }
