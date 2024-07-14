@@ -1,15 +1,19 @@
-// teht 1.10
+// teht 1.11*
 
 import { useState } from 'react'
 
 const StatisticsLine = (props) => {
   if (props.text != "positive") {
     return (
-      <div>{props.text} {props.value}</div>
+      <tr>
+        <td>{props.text}</td><td>{props.value}</td>
+      </tr>
     )
   }
   return (
-    <div>{props.text} {props.value} %</div>
+    <tr>
+      <td>{props.text}</td><td>{props.value} %</td>
+    </tr>
   )
 
 }
@@ -30,12 +34,16 @@ const Statistics = (props) => {
   return (
     <div>
       <h2>statistics</h2>
-      <StatisticsLine text="good" value={props.good}/>
-      <StatisticsLine text="neutral" value={props.neutral}/>
-      <StatisticsLine text="bad" value={props.bad}/>
-      <StatisticsLine text="all" value={totalClicks}/>
-      <StatisticsLine text="average" value={(props.good - props.bad) / (props.good + props.neutral + props.bad)}/>
-      <StatisticsLine text="positive" value={props.good / (props.good + props.neutral + props.bad) * 100}/>  
+        <table>
+          <tbody>
+            <StatisticsLine text="good" value={props.good}/>
+            <StatisticsLine text="neutral" value={props.neutral}/>
+            <StatisticsLine text="bad" value={props.bad}/>
+            <StatisticsLine text="all" value={totalClicks}/>
+            <StatisticsLine text="average" value={(props.good - props.bad) / (props.good + props.neutral + props.bad)}/>
+            <StatisticsLine text="positive" value={props.good / (props.good + props.neutral + props.bad) * 100}/>  
+          </tbody>
+        </table>
     </div>
   )
 }
