@@ -1,4 +1,4 @@
-// teht 1.8
+// teht 1.9
 
 import { useState } from 'react'
 
@@ -9,13 +9,8 @@ const Statistics = (props) => {
   if (total_clicks == 0) {
     return (
       <div>
-        <h2>statistics</h2>
-        <div>Good {props.good}</div>
-        <div>Neutral {props.neutral}</div>
-        <div>Bad {props.bad}</div>
-        <div>All {total_clicks}</div>
-        <div>average 0</div>
-        <div>positive 0 %</div>
+      <h2>statistics</h2>
+      No Feedback given
       </div>
     )
   }
