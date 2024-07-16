@@ -45,11 +45,25 @@ const App = () => {
     )
   }
 
+  const Summary =({parts}) => {
+
+    // var total = parts.reduce(function(sum, part) {
+    //  return sum + part.exercises
+    // }, 0)
+
+    var total = parts.reduce((sum, part) => sum + part.exercises, 0)
+
+    return (
+      <p><b>Total of {total} exercises</b></p>
+    )
+  }
+
   const Course = ({course}) => {
     return (
       <div>
-        <Header header={course.name} />
+        <Header header={course.name}/>
         <Content parts={course.parts}/>
+        <Summary parts={course.parts}/>
       </div>
     )
   }
