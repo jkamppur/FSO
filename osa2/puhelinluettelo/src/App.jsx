@@ -1,6 +1,8 @@
-// teht 2.7
+// teht 2.10
 
 import { useState } from 'react'
+import Persons from './components/Persons'
+import PersonFilter from './components/PersonFilter'
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -13,19 +15,19 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [newFilter, setNewFilter] = useState('')
 
+  const personsToShow = newFilter === '' ?
+    persons : 
+    persons.filter(person => person.name.toLowerCase().includes(newFilter.toLowerCase()))
+
   const addName = (event) => {
     event.preventDefault()
-    // console.log('button clicked', event.target)
-    if (persons.every(person => person.name !== newName))
+    if (persons.every(person => person.name !== newName)) {
       setPersons(persons.concat({ name: newName, number: newNumber }))
+    }
     else
       alert(`${newName} is already added to phonebook`)
   }
 
-  const personsToShow = newFilter === ''
-    ? persons
-    : persons.filter(person => person.name.toLowerCase().includes(newFilter.toLowerCase()))
-  
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
@@ -34,19 +36,11 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
-  const handleFilterChange = (event) => {
-    setNewFilter(event.target.value)
-  }
-
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-          filter show with: 
-          <input value={newFilter}
-          onChange={handleFilterChange}/>
-        </div>
-      <h2>add a new</h2>
+      <PersonFilter setNewFilter={setNewFilter}/>
+      <h3>add a new</h3>
       <form onSubmit={addName}>
         <div>
           name: 
@@ -62,10 +56,8 @@ const App = () => {
           <button type="submit">add</button>
         </div>
       </form>
-      <h2>Numbers</h2>
-        {personsToShow.map(person =>
-          <p key={person.name}> {person.name} {person.number}</p>
-        )}
+      <h3>Numbers</h3>
+        <Persons personsToShow={personsToShow}/>
     </div>
   )
 
