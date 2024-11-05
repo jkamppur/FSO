@@ -1,9 +1,9 @@
-// teht 2.10
+// teht 2.12
 
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import Persons from './components/Persons'
 import PersonFilter from './components/PersonFilter'
+import personService from './services/persons.js'
 
 const App = () => {
 
@@ -14,15 +14,14 @@ const App = () => {
 
   useEffect(() => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+        setPersons(response)
       })
   }, [])
 
-  console.log('render', persons.length, 'persons')
+  console.log('render', persons.length, 'persons, number', newNumber )
 
   const personsToShow = newFilter === '' ?
     persons : 
@@ -31,12 +30,12 @@ const App = () => {
   const addName = (event) => {
     event.preventDefault()
     if (persons.every(person => person.name !== newName)) {
-      // setPersons(persons.concat({ name: newName, number: newNumber }))
-      axios
-      .post('http://localhost:3001/persons', { name: newName, number: newNumber })
-      .then(response => {
-        console.log(response)
-        setPersons(persons.concat({ name: newName, number: newNumber }))
+      personService
+          .create({ name: newName, number: newNumber })
+          .then(returnedPerson => {
+            setPersons(persons.concat(returnedPerson))
+            setNewName('')
+            setNewNumber('')
       })
     }
     else
