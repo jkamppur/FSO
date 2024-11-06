@@ -1,4 +1,4 @@
-// teht 2.14
+// teht 2.15
 
 import { useState, useEffect } from 'react'
 import Persons from './components/Persons'
@@ -13,7 +13,6 @@ const App = () => {
   const [newFilter, setNewFilter] = useState('')
 
   useEffect(() => {
-    console.log('effect')
     personService
       .getAll()
       .then(response => {
@@ -21,12 +20,12 @@ const App = () => {
       })
   }, [])
 
-  console.log('render', persons.length, 'persons, number', newNumber )
-
+  // Filter
   const personsToShow = newFilter === '' ?
     persons : 
     persons.filter(person => person.name.toLowerCase().includes(newFilter.toLowerCase()))
 
+  // Add button handler
   const addName = (event) => {
     event.preventDefault()
     if (persons.every(person => person.name !== newName)) {
@@ -34,21 +33,24 @@ const App = () => {
           .create({ name: newName, number: newNumber })
           .then(returnedPerson => {
             setPersons(persons.concat(returnedPerson))
-            setNewName('')
-            setNewNumber('')  // TODO Number update not visible in browser.
       })
     }
-    else
-      alert(`${newName} is already added to phonebook`)
+    else {
+      if (window.confirm(newName + ' is already added to phonebook. Replace the old number with a new one?')) {
+        const person = persons.find(p => p.name === newName)  // find person to be updated, id is needed
+        personService.update(person.id, { name: newName, number: newNumber }).then(response => 
+          setPersons(persons.map(person => person.name !== newName ? person : response))
+        )
+      }
+    }
   }
 
+  // Delete button handler
   const deleteId = (id, name) => {
-    console.log(name)
     if (window.confirm('Delete ' +  name +  ' ?')) {
       personService
       .deletePerson(id)
-        .then( (deleteData) => {
-          console.log(deleteData)
+        .then( () => {
           setPersons(persons.filter(person => person.id !== id))
         })
     }
