@@ -1,4 +1,4 @@
-// teht 2.12
+// teht 2.14
 
 import { useState, useEffect } from 'react'
 import Persons from './components/Persons'
@@ -35,11 +35,23 @@ const App = () => {
           .then(returnedPerson => {
             setPersons(persons.concat(returnedPerson))
             setNewName('')
-            setNewNumber('')
+            setNewNumber('')  // TODO Number update not visible in browser.
       })
     }
     else
       alert(`${newName} is already added to phonebook`)
+  }
+
+  const deleteId = (id, name) => {
+    console.log(name)
+    if (window.confirm('Delete ' +  name +  ' ?')) {
+      personService
+      .deletePerson(id)
+        .then( (deleteData) => {
+          console.log(deleteData)
+          setPersons(persons.filter(person => person.id !== id))
+        })
+    }
   }
 
   const handleNameChange = (event) => {
@@ -71,7 +83,7 @@ const App = () => {
         </div>
       </form>
       <h3>Numbers</h3>
-        <Persons personsToShow={personsToShow}/>
+        <Persons personsToShow={personsToShow} deletePerson={deleteId}/>
     </div>
   )
 
