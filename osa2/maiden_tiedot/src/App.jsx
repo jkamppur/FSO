@@ -19,18 +19,15 @@ const App = () => {
   const countriesToShow =  
     countryList.filter(country => country.name.common.toLowerCase().includes(searchKey.toLowerCase()))
 
-
   const handleSeachKeyChange = (event) => {
-    console.log(event.target.value)
     setSearchKey(event.target.value)
-    console.log(countriesToShow.length)
   }
 
   return (
     <div>
       find countries &nbsp;
       <input value={searchKey} onChange={handleSeachKeyChange} />
-      <SearchOutput countryList={countriesToShow}/>
+      <SearchOutput countryList={countriesToShow} showCountry={setSearchKey}/>
     </div>
   )
 

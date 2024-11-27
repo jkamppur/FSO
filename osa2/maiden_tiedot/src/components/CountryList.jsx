@@ -1,11 +1,9 @@
-const CountryList = ({ countries }) => {
-
-    console.log(countries)
+const CountryList = ({ countries, showCountry }) => {
 
     return (
         <div>
             {countries.map(country => 
-            <div> {country.name.common} </div>
+            <div key={country.name.common}> {country.name.common}  <button onClick={ () => showCountry(country.name.common)}> show </button></div>
             )}
         </div>
     )
