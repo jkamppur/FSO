@@ -44,7 +44,14 @@ const App = () => {
         setTimeout(() => {
           setSuccessMessage(null)
         }, 5000)
-      })      
+      }).catch(error => {      // Handling of failure for person create
+        setErrorMessage(
+          `Adding ${newName} failed: ${error.response.data.error}`
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
     }
     else {
       if (window.confirm(newName + ' is already added to phonebook. Replace the old number with a new one?')) {
@@ -58,8 +65,15 @@ const App = () => {
           setTimeout(() => {
             setSuccessMessage(null)
           }, 5000)
+        }).catch(error => {      // Handling of failure for person modify
+          setErrorMessage(
+            `Modifying ${newName} failed: ${error.response.data.error}`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
-      }
+        }
     }
   }
 
