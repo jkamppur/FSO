@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const config = require('../utils/config.js')
 
 const blogSchema = mongoose.Schema({
   title: String,
@@ -7,11 +8,7 @@ const blogSchema = mongoose.Schema({
   likes: Number
 })
 
-// const Blog = mongoose.model('Blog', blogSchema)
-
-//  const mongoUrl = 'mongodb://localhost/bloglist'
-const url = process.env.MONGODB_URI
-
+const url = config.MONGODB_URI
 mongoose.connect(url)
 
 module.exports = mongoose.model('Blog', blogSchema)
