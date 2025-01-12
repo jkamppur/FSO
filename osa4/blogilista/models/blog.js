@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const config = require('../utils/config.js')
 
 const blogSchema = mongoose.Schema({
   title: String,
@@ -8,7 +7,12 @@ const blogSchema = mongoose.Schema({
   likes: Number
 })
 
-const url = config.MONGODB_URI
-mongoose.connect(url)
+blogSchema.set('toJSON', {  // Will be called automatically, for each person read from database
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString()
+    delete returnedObject._id
+    delete returnedObject.__v
+  }
+})
 
 module.exports = mongoose.model('Blog', blogSchema)

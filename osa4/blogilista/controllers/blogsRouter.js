@@ -2,10 +2,7 @@ const blogsRouter = require('express').Router()
 const logger = require('../utils/logger.js')
 const Blog = require('../models/blog.js')
 
-logger.info('router init')
-
 blogsRouter.get('', (request, response) => {
-  logger.info('router get')
   Blog
     .find({})
     .then(blogs => {
