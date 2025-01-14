@@ -4,24 +4,24 @@ const listHelper = require('../utils/list_helper')
 
 const testBlogs = [
   {
-    'author': 'T. Testaaja',
-    'title': 'test blog',
-    'url': 'www.hs.fi',
-    'likes': 5,
-    'id': '6783c532dc2b2b250e22db6'
-  },
-  {
     'title': 'test blog 2',
     'author': 'T. Testaaja',
     'url': 'www.hs.fi',
-    'likes': 7,
+    'likes': 3,
     'id': '6783cd39dcaa076626bb0c9a'
   },
   {
-    'title': 'test blog 3',
     'author': 'T. Testaaja',
+    'title': 'test blog',
     'url': 'www.hs.fi',
-    'likes': 3,
+    'likes': 77,
+    'id': '6783c532dc2b2b250e22db6'
+  },
+  {
+    'title': 'Avustajan tunnustukset',
+    'author': 'A. Avustaja',
+    'url': 'www.hs.fi',
+    'likes': 124,
     'id': '6783cd39dcaa076626bb0c9a'
   },
 ]
@@ -44,7 +44,7 @@ describe ('totalLikes', () => {
 
   test('totalLikes sum correctly three blogs', () => {
     const result = listHelper.totalLikes(testBlogs)
-    assert.strictEqual(result, 15)
+    assert.strictEqual(result, 204)
   })
 })
 
@@ -56,6 +56,38 @@ describe ('favoriteBlog', () => {
 
   test('favoriteBlog return correct blog from three blogs list', () => {
     const result = listHelper.favoriteBlog(testBlogs)
-    assert.strictEqual(result, testBlogs[1])
+    assert.strictEqual(result, testBlogs[2])
+  })
+})
+
+describe ('mostBlogs', () => {
+  test('mostBlogs return empty for empty list', () => {
+    const result = listHelper.mostBlogs([])
+    assert.deepStrictEqual(result, {})
+  })
+
+  test('mostBlogs returns correct info from three blogs', () => {
+    const result = listHelper.mostBlogs(testBlogs)
+    const expected = {
+      'author': 'T. Testaaja',
+      'blogs': 2
+    }
+    assert.deepStrictEqual(result, expected)
+  })
+})
+
+describe ('mostLikes', () => {
+  test('mostLikes return empty for empty list', () => {
+    const result = listHelper.mostLikes([])
+    assert.deepStrictEqual(result, {})
+  })
+
+  test('mostLikes returns correct info from three blogs', () => {
+    const result = listHelper.mostLikes(testBlogs)
+    const expected = {
+      'author': 'A. Avustaja',
+      'likes': 124
+    }
+    assert.deepStrictEqual(result, expected)
   })
 })
