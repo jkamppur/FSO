@@ -26,7 +26,7 @@ const testBlogs = [
   },
 ]
 
-
+// Teht 4.3
 describe ('dummy', () => {
   test('dummy returns one', () => {
     const blogs = []
@@ -36,6 +36,7 @@ describe ('dummy', () => {
   })
 })
 
+// Teht 4.4
 describe ('totalLikes', () => {
   test('totalLikes sums correctly empty list', () => {
     const result = listHelper.totalLikes([])
@@ -48,6 +49,7 @@ describe ('totalLikes', () => {
   })
 })
 
+// Teht 4.5
 describe ('favoriteBlog', () => {
   test('favoriteBlog return empty for empty list', () => {
     const result = listHelper.favoriteBlog([])
@@ -56,10 +58,11 @@ describe ('favoriteBlog', () => {
 
   test('favoriteBlog return correct blog from three blogs list', () => {
     const result = listHelper.favoriteBlog(testBlogs)
-    assert.strictEqual(result, testBlogs[2])
+    assert.deepStrictEqual(result, testBlogs[2])
   })
 })
 
+// Teht 4.6*
 describe ('mostBlogs', () => {
   test('mostBlogs return empty for empty list', () => {
     const result = listHelper.mostBlogs([])
@@ -76,6 +79,7 @@ describe ('mostBlogs', () => {
   })
 })
 
+// Teht 4.7*
 describe ('mostLikes', () => {
   test('mostLikes return empty for empty list', () => {
     const result = listHelper.mostLikes([])
