@@ -41,6 +41,17 @@ test('blogs are returned as json', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
+// teht 4.9
+test('blogs contains key id', async () => {
+
+  const response = await api.get('/api/blogs')
+  const ids = response.body.map(blog => blog.id)
+
+  ids.forEach(element => {
+    assert.notEqual(element, undefined)
+  })
+})
+
 test('there are two blogs', async () => {
   const response = await api.get('/api/blogs')
   assert.strictEqual(response.body.length, initialBLogs.length)
