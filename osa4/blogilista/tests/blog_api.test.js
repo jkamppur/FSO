@@ -52,6 +52,30 @@ test('blogs contains key id', async () => {
   })
 })
 
+// teht 4.10
+test('blog can be added', async () => {
+
+  const newBlog = {
+    'title': 'Avustajan salaiset tunnustukset',
+    'author': 'A. Avustaja',
+    'url': 'www.seiska.fi',
+    'likes': 987,
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+
+  // Check that length of blogs has increased by 1
+  const response = await api.get('/api/blogs')
+  assert.strictEqual(response.body.length, initialBLogs.length + 1)
+
+  // Check that last blog in returned list matches with added blog
+  const addedBlog = response.body[response.body.length-1]
+  delete addedBlog.id
+  assert.deepEqual(newBlog, addedBlog)
+})
+
 test('there are two blogs', async () => {
   const response = await api.get('/api/blogs')
   assert.strictEqual(response.body.length, initialBLogs.length)
