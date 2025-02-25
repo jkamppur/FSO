@@ -1,4 +1,4 @@
-const { test, after, beforeEach } = require('node:test')
+const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
 const supertest = require('supertest')
 const mongoose = require('mongoose')
@@ -32,62 +32,89 @@ beforeEach(async () => {
   await blogObject.save()
 })
 
+describe ('blog reading using api', () => {
+  test('there are two blogs', async () => {
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, initialBLogs.length)
+  })
 
-// teht 4.8
-test('blogs are returned as json', async () => {
-  await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-})
+  test('the first blog is test blog', async () => {
+    const response = await api.get('/api/blogs')
+    // async, await: tänne tullaan vasta kun edellinen komento eli HTTP-pyyntö on suoritettu
+    // muuttujassa response on nyt HTTP-pyynnön tulos
 
-// teht 4.9
-test('blogs contains key id', async () => {
+    const contents = response.body.map(e => e.title)
+    assert(contents.includes('test blog'))
+  })
 
-  const response = await api.get('/api/blogs')
-  const ids = response.body.map(blog => blog.id)
+  // teht 4.8
+  test('blogs are returned as json', async () => {
+    await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+  })
 
-  ids.forEach(element => {
-    assert.notEqual(element, undefined)
+  // teht 4.9
+  test('blogs contains key id', async () => {
+
+    const response = await api.get('/api/blogs')
+    const ids = response.body.map(blog => blog.id)
+
+    ids.forEach(element => {
+      assert.notEqual(element, undefined)
+    })
   })
 })
 
-// teht 4.10
-test('blog can be added', async () => {
+describe ('blog adding using api', () => {
 
-  const newBlog = {
-    'title': 'Avustajan salaiset tunnustukset',
-    'author': 'A. Avustaja',
-    'url': 'www.seiska.fi',
-    'likes': 987,
-  }
+  // teht 4.10
+  test('blog can be added', async () => {
 
-  await api
-    .post('/api/blogs')
-    .send(newBlog)
+    const newBlog = {
+      'title': 'Avustajan salaiset tunnustukset',
+      'author': 'A. Avustaja',
+      'url': 'www.seiska.fi',
+      'likes': 987,
+    }
 
-  // Check that length of blogs has increased by 1
-  const response = await api.get('/api/blogs')
-  assert.strictEqual(response.body.length, initialBLogs.length + 1)
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
 
-  // Check that last blog in returned list matches with added blog
-  const addedBlog = response.body[response.body.length-1]
-  delete addedBlog.id
-  assert.deepEqual(newBlog, addedBlog)
-})
+    // Check that length of blogs has increased by 1
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, initialBLogs.length + 1)
 
-test('there are two blogs', async () => {
-  const response = await api.get('/api/blogs')
-  assert.strictEqual(response.body.length, initialBLogs.length)
-})
+    // Check that last blog in returned list matches with added blog
+    const addedBlog = response.body[response.body.length-1]
+    delete addedBlog.id
+    assert.deepEqual(newBlog, addedBlog)
+  })
 
-test('the first blog is test blog', async () => {
-  const response = await api.get('/api/blogs')
-  // async, await: tänne tullaan vasta kun edellinen komento eli HTTP-pyyntö on suoritettu
-  // muuttujassa response on nyt HTTP-pyynnön tulos
+  // teht 4.11*
+  test('blog with likes can be added, likes is set to zero', async () => {
 
-  const contents = response.body.map(e => e.title)
-  assert(contents.includes('test blog'))
+    const newBlog = {
+      'title': 'Avustajan tylsät tunnustukset',
+      'author': 'A. Avustaja',
+      'url': 'www.seiska.fi',
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    // Check that last blog likes = 0
+    const response = await api.get('/api/blogs')
+    const addedBlog = response.body[response.body.length-1]
+    assert.equal(addedBlog.likes, 0)
+  })
 })
 
 // Kaikkien testien päätteeksi on vielä lopputoimenpiteenä katkaistava

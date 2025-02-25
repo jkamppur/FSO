@@ -11,6 +11,12 @@ blogsRouter.post('', async (request, response) => {
   logger.info(request.body)
   const blog = new Blog(request.body)
 
+  const keys = Object.keys(request.body)
+
+  if (!keys.includes('likes')) {
+    blog.likes = 0
+  }
+
   const result = await blog.save()
   response.status(201).json(result)
 })
