@@ -32,7 +32,7 @@ beforeEach(async () => {
   await blogObject.save()
 })
 
-describe ('blog reading using api', () => {
+describe ('blog read using api', () => {
   test('there are two blogs', async () => {
     const response = await api.get('/api/blogs')
     assert.strictEqual(response.body.length, initialBLogs.length)
@@ -67,7 +67,7 @@ describe ('blog reading using api', () => {
   })
 })
 
-describe ('blog adding using api', () => {
+describe ('blog add using api', () => {
 
   // teht 4.10
   test('blog can be added', async () => {
@@ -115,7 +115,34 @@ describe ('blog adding using api', () => {
     const addedBlog = response.body[response.body.length-1]
     assert.equal(addedBlog.likes, 0)
   })
+
+  // teht 4.12*
+  test('blog without title is not stored', async () => {
+    const newBlog = {
+      'author': 'No. Title',
+      'url': 'www.youtube.com',
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+  })
+
+  test('blog without author is not stored', async () => {
+    const newBlog = {
+      'title': 'No. author',
+      'url': 'www.youtube.com',
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+  })
 })
+
+
 
 // Kaikkien testien päätteeksi on vielä lopputoimenpiteenä katkaistava
 // Mongoosen käyttämä tietokantayhteys.

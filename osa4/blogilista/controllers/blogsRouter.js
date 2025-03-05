@@ -7,18 +7,27 @@ blogsRouter.get('', async (request, response) => {
   response.json(blogs)
 })
 
-blogsRouter.post('', async (request, response) => {
+blogsRouter.post('', async (request, response, next) => {
   logger.info(request.body)
   const blog = new Blog(request.body)
 
   const keys = Object.keys(request.body)
 
-  if (!keys.includes('likes')) {
-    blog.likes = 0
-  }
+  try {
+    if (!keys.includes('likes')) {
+      blog.likes = 0
+    }
 
-  const result = await blog.save()
-  response.status(201).json(result)
+    if (!keys.includes('title') || !keys.includes('author')) {
+      response.status(400).end()
+    }
+
+    const result = await blog.save()
+    response.status(201).json(result)
+
+  } catch(exception) {
+    next(exception)
+  }
 })
 
 module.exports = blogsRouter
