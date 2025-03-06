@@ -142,6 +142,47 @@ describe ('blog add using api', () => {
   })
 })
 
+describe ('blog delete and modify', () => {
+
+  // teht 4.13*
+  test('blog can be deleted', async () => {
+
+    // Get no of blogs
+    var response = await api.get('/api/blogs').expect(200).expect('Content-Type', /application\/json/)
+    const no_of_blogs_org = response.body.length
+
+    // Delete first blog
+    await api.delete(`/api/blogs/${response.body[0].id}`).expect(204)
+
+    // Get new number of blogs
+    response = await api.get('/api/blogs').expect(200).expect('Content-Type', /application\/json/)
+    const no_of_blogs_new = response.body.length
+
+    // Check that number of blogs has decreased by one
+    assert.strictEqual(no_of_blogs_org, no_of_blogs_new + 1)
+  })
+
+  // teht 4.14*
+  test('blog can be modified', async () => {
+
+    const modifiedBlog = {
+      'title': 'Avustajan tunnustukset',
+      'author': 'A. Avustaja',
+      'url': 'www.hs.fi/avustaja',
+      'likes': 241,
+    }
+
+    // Modify first blog
+    var response = await api.get('/api/blogs').expect(200).expect('Content-Type', /application\/json/)
+    response = await api.put(`/api/blogs/${response.body[0].id}`).send(modifiedBlog).expect(200)
+
+    // Verify storing from db
+    response = await api.get('/api/blogs').expect(200).expect('Content-Type', /application\/json/)
+    const modificationResult = response.body[0]
+    delete modificationResult.id
+    assert.deepEqual(modifiedBlog, modificationResult)
+  })
+})
 
 
 // Kaikkien testien päätteeksi on vielä lopputoimenpiteenä katkaistava
