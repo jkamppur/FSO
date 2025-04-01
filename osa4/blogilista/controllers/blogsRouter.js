@@ -1,29 +1,46 @@
 const blogsRouter = require('express').Router()
 const logger = require('../utils/logger.js')
 const Blog = require('../models/blog.js')
+const User = require('../models/user')
 
 blogsRouter.get('', async (request, response) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog
+    .find({}).populate('userId', { username: 1, name: 1 })
+
   response.json(blogs)
 })
 
 blogsRouter.post('', async (request, response, next) => {
   logger.info(request.body)
-  const blog = new Blog(request.body)
-
   const keys = Object.keys(request.body)
+  var likes = 0
 
   try {
-    if (!keys.includes('likes')) {
-      blog.likes = 0
+    if (keys.includes('likes')) {
+      likes = request.body.likes
     }
 
-    if (!keys.includes('title') || !keys.includes('author')) {
+    if (!keys.includes('title') || !keys.includes('author') ) { //|| !keys.includes('userid') ) {
       response.status(400).end()
+    } else {
+      const user = await User.findOne()
+
+      const newBlog = new Blog({
+        title: request.body.title,
+        author: request.body.author,
+        url: request.body.url,
+        likes: likes,
+        userId: user._id
+      })
+
+      const result = await newBlog.save()
+
+      user.blogs = user.blogs.concat(newBlog._id)  // Tallennetaan myös käyttäjän tietoihin lisätty blog
+      await user.save()
+
+      response.status(201).json(result)
     }
 
-    const result = await blog.save()
-    response.status(201).json(result)
 
   } catch(exception) {
     next(exception)

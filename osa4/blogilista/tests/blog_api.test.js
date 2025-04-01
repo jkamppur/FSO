@@ -67,10 +67,10 @@ describe ('blog read using api', () => {
   })
 })
 
-describe ('blog add using api', () => {
+describe.only ('blog add using api', () => {
 
   // teht 4.10
-  test('blog can be added', async () => {
+  test.only('blog can be added', async () => {
 
     const newBlog = {
       'title': 'Avustajan salaiset tunnustukset',
@@ -92,6 +92,7 @@ describe ('blog add using api', () => {
     // Check that last blog in returned list matches with added blog
     const addedBlog = response.body[response.body.length-1]
     delete addedBlog.id
+    delete addedBlog.userId
     assert.deepEqual(newBlog, addedBlog)
   })
 
