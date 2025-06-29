@@ -171,6 +171,7 @@ describe ('blog delete and modify', () => {
       'author': 'A. Avustaja',
       'url': 'www.hs.fi/avustaja',
       'likes': 241,
+      userId: []
     }
 
     // Modify first blog
