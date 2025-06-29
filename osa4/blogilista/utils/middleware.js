@@ -12,6 +12,10 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).json({ error: 'username required' })
   }
 
+  if (error.name ===  'JsonWebTokenError') {
+    return response.status(401).json({ error: 'token missing or invalid' })
+  }
+
   // console.log(error.name)
   // console.log(error.message)
 
