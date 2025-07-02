@@ -11,23 +11,14 @@ blogsRouter.get('', async (request, response) => {
   response.json(blogs)
 })
 
-const getTokenFrom = request => {
-  const authorization = request.get('authorization')
-  // Hyväksytään vain Bearer-skeema
-  if (authorization && authorization.startsWith('Bearer ')) {
-    return authorization.replace('Bearer ', '')
-  }
-  return null
-}
-
 // Blogin lisäys
 blogsRouter.post('', async (request, response, next) => {
   logger.info(request.body)
   const keys = Object.keys(request.body)
   var likes = 0
 
-  // Tarkastetaan token, saadaan myös käyyäjän id samalla.
-  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+  // Tarkastetaan token, saadaan myös kättäjän id samalla.
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
   }

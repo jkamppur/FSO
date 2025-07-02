@@ -28,8 +28,9 @@ loginRouter.post('/', async (request, response) => {
   }
 
   // Jos salasana on oikein, luodaan metodin jwt.sign avulla token,
-  // joka sisältää digitaalisesti allekirjoitetussa muodossa käyttäjätunnuksen ja käyttäjän id
-  
+  // joka sisältää digitaalisesti allekirjoitetussa muodossa käyttäjätunnuksen
+  // ja käyttäjän id, salakirjoitettu käyttämällä ympäsiristömuuttujaa SECRET.
+
   const token = jwt.sign(userForToken, process.env.SECRET)
 
   response

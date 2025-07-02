@@ -22,6 +22,21 @@ const errorHandler = (error, request, response, next) => {
   next(error)
 }
 
+
+// Muista, että normaali middleware on funktio, jolla on kolme parametria,
+// ja joka kutsuu lopuksi parametrina next olevaa funktiota:
+const tokenExtractor = (request, response, next) => {
+  // tokenin ekstraktoiva koodi
+  const authorization = request.get('authorization')
+  // Hyväksytään vain Bearer-skeema
+  if (authorization && authorization.startsWith('Bearer ')) {
+    request.token = authorization.replace('Bearer ', '')
+  }
+
+  next()
+}
+
 module.exports = {
-  errorHandler
+  errorHandler,
+  tokenExtractor
 }
