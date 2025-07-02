@@ -3,7 +3,7 @@ Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNfdXNlciIsImlkIjoiNjg2MTg2YTdiODM1MjY3MTZkN2JkODA3IiwiaWF0IjoxNzUxMjI2OTE4fQ.ptfi74FF7rMY9NEX-BwyyxVwrZiRrS4qtOMc-xizC_E
 
 {
-  "title": "test blog 7",
+  "title": "test blog 8",
   "author": "T. Testaaja",
   "url": "www.hs.fi",
   "likes": 6

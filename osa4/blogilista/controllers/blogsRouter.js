@@ -1,8 +1,7 @@
 const blogsRouter = require('express').Router()
 const logger = require('../utils/logger.js')
 const Blog = require('../models/blog.js')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
+const middleware = require('../utils/middleware')
 
 blogsRouter.get('', async (request, response) => {
   const blogs = await Blog
@@ -12,17 +11,12 @@ blogsRouter.get('', async (request, response) => {
 })
 
 // Blogin lisäys
-blogsRouter.post('', async (request, response, next) => {
+blogsRouter.post('', middleware.userExtractor, async (request, response, next) => {
   logger.info(request.body)
   const keys = Object.keys(request.body)
   var likes = 0
 
-  // Tarkastetaan token, saadaan myös kättäjän id samalla.
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
-  const user = await User.findById(decodedToken.id)
+  const user = request.user
 
   try {
     if (keys.includes('likes')) {
@@ -56,12 +50,8 @@ blogsRouter.post('', async (request, response, next) => {
 })
 
 // 4.13* blogin poisto
-blogsRouter.delete('/:id', async (request, response, next) => {
-
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if (!decodedToken.id) {
-    return response.status(401).json({ error: 'token invalid' })
-  }
+// Middleware otettu käyttöön käsittelijälle
+blogsRouter.delete('/:id', middleware.userExtractor, async (request, response, next) => {
 
   const blog = await Blog.findById(request.params.id)
 
@@ -69,7 +59,7 @@ blogsRouter.delete('/:id', async (request, response, next) => {
     return response.status(400).json({ error: 'blog not found' })
   }
 
-  if ( blog.userId.toString() !== decodedToken.id ) {
+  if ( blog.userId.toString() !== request.user.id ) {
     return response.status(401).json({ error: 'only blog author can delete it' })
   }
 
