@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import ErrorNotification from './components/ErrorNotification'
+import SuccessNotification from './components/SuccessNotification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -12,6 +14,9 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  // notification
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -47,19 +52,26 @@ const App = () => {
       setUsername('')
       setPassword('')
       blogService.setToken(user.token)
+      setSuccessMessage('user succesfully logged in')
+      setTimeout(() => {
+         setSuccessMessage(null)
+      }, 5000)
 
     } catch (exception) {
-      console.log('Login error wrong password')
-      // setErrorMessage('wrong credentials')
-      // setTimeout(() => {
-      //   setErrorMessage(null)
-      // }, 5000)
+      setErrorMessage('wrong credentials')
+      setTimeout(() => {
+         setErrorMessage(null)
+      }, 5000)
     }
   }
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
     setUser(null)
+    setSuccessMessage('user succesfully logged out')
+    setTimeout(() => {
+      setSuccessMessage(null)
+    }, 5000)
   }
 
   const handleAddNewBlog = async (event) => {
@@ -71,30 +83,23 @@ const App = () => {
                 url: url })
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
+        console.log(returnedBlog)
+        setSuccessMessage(`${returnedBlog.title} by ${returnedBlog.author} added`)
+        setTitle('')
+        setAuthor('')
+        setUrl('')
+
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
       }).catch(error => {      // Handling of failure for person create
-        console.log(`Adding ${title} failed: ${error}`)
+        setErrorMessage(
+        `Blog add failed: ${error}`
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
       })
-
-
-      //   )
-
-          // .then(() => {
-          //   setSuccessMessage(
-          //     `Added ${newName}`
-          //   )
-          //   setTimeout(() => {
-          //     setSuccessMessage(null)
-          //   }, 5000)
-          // }).catch(error => {      // Handling of failure for person create
-          //   setErrorMessage(
-          //     `Adding ${newName} failed: ${error.response.data.error}`
-          //   )
-          //   setTimeout(() => {
-          //     setErrorMessage(null)
-          //   }, 5000)
-          // })
-
-
   }
 
 
@@ -102,7 +107,9 @@ const App = () => {
 
     return (
       <div>
-          <h2>Login</h2>
+        <h2>Login</h2>
+        <ErrorNotification message={errorMessage}/>
+        <SuccessNotification message={successMessage}/>
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -135,6 +142,8 @@ const App = () => {
     <div>
       <h2>blogs
       </h2>
+      <ErrorNotification message={errorMessage}/>
+      <SuccessNotification message={successMessage}/>
       <p>{user.name} logged in
         <button onClick={handleLogout}>
           logout
