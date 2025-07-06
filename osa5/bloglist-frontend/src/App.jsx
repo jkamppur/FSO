@@ -5,14 +5,18 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('') 
-  const [password, setPassword] = useState('') 
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  // Add blog
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -22,7 +26,7 @@ const App = () => {
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
-      // noteService.setToken(user.token)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -42,6 +46,8 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      blogService.setToken(user.token)
+
     } catch (exception) {
       console.log('Login error wrong password')
       // setErrorMessage('wrong credentials')
@@ -55,6 +61,42 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
     setUser(null)
   }
+
+  const handleAddNewBlog = async (event) => {
+    event.preventDefault()
+
+    blogService
+      .create({ title: title,
+                author: author,
+                url: url })
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
+      }).catch(error => {      // Handling of failure for person create
+        console.log(`Adding ${title} failed: ${error}`)
+      })
+
+
+      //   )
+
+          // .then(() => {
+          //   setSuccessMessage(
+          //     `Added ${newName}`
+          //   )
+          //   setTimeout(() => {
+          //     setSuccessMessage(null)
+          //   }, 5000)
+          // }).catch(error => {      // Handling of failure for person create
+          //   setErrorMessage(
+          //     `Adding ${newName} failed: ${error.response.data.error}`
+          //   )
+          //   setTimeout(() => {
+          //     setErrorMessage(null)
+          //   }, 5000)
+          // })
+
+
+  }
+
 
   if (user === null ) {
 
@@ -91,7 +133,6 @@ const App = () => {
 
   return (
     <div>
-
       <h2>blogs
       </h2>
       <p>{user.name} logged in
@@ -102,6 +143,38 @@ const App = () => {
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
+
+      <h2>create new</h2>
+        <form onSubmit={handleAddNewBlog}>
+          <div>
+            title:
+              <input
+              type="text"
+              value={title}
+              name="title"
+              onChange={({ target }) => setTitle(target.value)}
+            />
+          </div>
+          <div>
+            author:
+              <input
+              type="text"
+              value={author}
+              name="author"
+              onChange={({ target }) => setAuthor(target.value)}
+            />
+          </div>
+          <div>
+            url:
+              <input
+              type="text"
+              value={url}
+              name="url"
+              onChange={({ target }) => setUrl(target.value)}
+            />
+          </div>
+          <button type="submit">create</button>
+        </form>
     </div>
   )
 }
