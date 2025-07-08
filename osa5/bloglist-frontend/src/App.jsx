@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import ErrorNotification from './components/ErrorNotification'
 import SuccessNotification from './components/SuccessNotification'
+import AddNewBlog from './components/AddBlog'
+import Togglable from './components/Toggleable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -11,12 +13,14 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   // Add blog
-  const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
   // notification
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
+  // ref for togglable
+  const blogFormRef = useRef()
+
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -74,9 +78,10 @@ const App = () => {
     }, 5000)
   }
 
-  const handleAddNewBlog = async (event) => {
-    event.preventDefault()
-
+  const handleAddNewBlog = (title, author, url) => {
+    // Voimme nyt piilottaa lomakkeen kutsumalla blogFormRef.current.toggleVisibility()
+    // samalla kun uuden blogin luominen tapahtuu:
+    blogFormRef.current.toggleVisibility()
     blogService
       .create({ title: title,
                 author: author,
@@ -85,9 +90,6 @@ const App = () => {
         setBlogs(blogs.concat(returnedBlog))
         console.log(returnedBlog)
         setSuccessMessage(`${returnedBlog.title} by ${returnedBlog.author} added`)
-        setTitle('')
-        setAuthor('')
-        setUrl('')
 
         setTimeout(() => {
           setSuccessMessage(null)
@@ -135,6 +137,7 @@ const App = () => {
           <button type="submit">login</button>
         </form>
       </div>
+
     )
   }
 
@@ -152,40 +155,15 @@ const App = () => {
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
-
-      <h2>create new</h2>
-        <form onSubmit={handleAddNewBlog}>
-          <div>
-            title:
-              <input
-              type="text"
-              value={title}
-              name="title"
-              onChange={({ target }) => setTitle(target.value)}
-            />
-          </div>
-          <div>
-            author:
-              <input
-              type="text"
-              value={author}
-              name="author"
-              onChange={({ target }) => setAuthor(target.value)}
-            />
-          </div>
-          <div>
-            url:
-              <input
-              type="text"
-              value={url}
-              name="url"
-              onChange={({ target }) => setUrl(target.value)}
-            />
-          </div>
-          <button type="submit">create</button>
-        </form>
+      <h2/>
+      <Togglable buttonLabel="add blog" ref={blogFormRef} >
+        <AddNewBlog handleAddNewBlog={handleAddNewBlog}/>
+      </Togglable>
     </div>
   )
+  // useRef hookilla luodaan ref noteFormRef, joka kiinnitetään muistiinpanojen luomislomakkeen
+  // sisältävälle Togglable-komponentille. Nyt siis muuttuja noteFormRef toimii viitteenä komponenttiin.
+
 }
 
 export default App
