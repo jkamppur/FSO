@@ -152,13 +152,13 @@ const App = () => {
           logout
         </button>
       </p>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
-      <h2/>
       <Togglable buttonLabel="add blog" ref={blogFormRef} >
         <AddNewBlog handleAddNewBlog={handleAddNewBlog}/>
       </Togglable>
+      <h2/>
+      {blogs.map(blog =>
+        <Blog key={blog.id} blog={blog} />
+      )}
     </div>
   )
   // useRef hookilla luodaan ref noteFormRef, joka kiinnitetään muistiinpanojen luomislomakkeen
