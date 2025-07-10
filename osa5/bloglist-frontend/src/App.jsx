@@ -12,9 +12,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  // Add blog
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   // notification
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
@@ -88,9 +85,7 @@ const App = () => {
                 url: url })
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        console.log(returnedBlog)
         setSuccessMessage(`${returnedBlog.title} by ${returnedBlog.author} added`)
-
         setTimeout(() => {
           setSuccessMessage(null)
         }, 5000)
@@ -102,6 +97,35 @@ const App = () => {
           setErrorMessage(null)
         }, 5000)
       })
+  }
+
+  const handleUpdateBlog = (title, author, url, likes, id) => {
+    const newBlog = {
+      title: title,
+      author: author,
+      url: url,
+      likes: likes
+    }
+    // Get ID for blog?
+    blogService
+      .put(newBlog, id)
+      .then(returnedBlog => {
+        setSuccessMessage(`${returnedBlog.title} by ${returnedBlog.author} updated`)
+        blogService.getAll().then(blogs =>
+          setBlogs( blogs )
+        )
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
+      }).catch(error => {      // Handling of failure for person create
+        setErrorMessage(
+        `Blog update failed: ${error}`
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
+
   }
 
 
@@ -157,7 +181,7 @@ const App = () => {
       </Togglable>
       <h2/>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} addLike={handleUpdateBlog} />
       )}
     </div>
   )

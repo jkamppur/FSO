@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, addLike }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -16,8 +16,8 @@ const Blog = ({ blog }) => {
     console.log(blog)
   }
 
-  const addLike = () => {
-    console.log('Add like not yet implemented')
+  const increaseLike = () => {
+    addLike(blog.title, blog.author, blog.url, blog.likes + 1, blog.id)
   }
 
 
@@ -41,7 +41,7 @@ const Blog = ({ blog }) => {
       {blog.url}
       </div>
       <div>
-      likes {blog.likes} <button onClick={addLike}>like</button>
+      likes {blog.likes} <button onClick={increaseLike}>like</button>
       </div>
       <div>
       {blog.author}
