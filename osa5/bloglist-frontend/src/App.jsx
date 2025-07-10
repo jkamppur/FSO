@@ -165,6 +165,10 @@ const App = () => {
     )
   }
 
+  function compareLikes(a, b) {
+    return b.likes - a.likes
+  }
+
   return (
     <div>
       <h2>blogs
@@ -180,7 +184,7 @@ const App = () => {
         <AddNewBlog handleAddNewBlog={handleAddNewBlog}/>
       </Togglable>
       <h2/>
-      {blogs.map(blog =>
+      {blogs.sort(compareLikes).map(blog =>
         <Blog key={blog.id} blog={blog} addLike={handleUpdateBlog} />
       )}
     </div>
