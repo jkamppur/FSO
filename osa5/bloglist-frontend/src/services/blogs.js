@@ -29,7 +29,7 @@ const put = async (updatedBlog, id) => {
     headers: { Authorization: 'Bearer ' + token },
   }
 
-  const response = await axios.put(baseUrl + "/" + id, updatedBlog, config)
+  const response = await axios.put(baseUrl + '/' + id, updatedBlog, config)
 
   return response.data
 
@@ -41,7 +41,7 @@ const remove = async (id) => {
     headers: { Authorization: 'Bearer ' + token },
   }
 
-  const response = await axios.delete(baseUrl + "/" + id, config)
+  const response = await axios.delete(baseUrl + '/' + id, config)
 
   return response.data
 

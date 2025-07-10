@@ -55,13 +55,13 @@ const App = () => {
       blogService.setToken(user.token)
       setSuccessMessage('user succesfully logged in')
       setTimeout(() => {
-         setSuccessMessage(null)
+        setSuccessMessage(null)
       }, 5000)
 
     } catch (exception) {
       setErrorMessage('wrong credentials')
       setTimeout(() => {
-         setErrorMessage(null)
+        setErrorMessage(null)
       }, 5000)
     }
   }
@@ -81,8 +81,8 @@ const App = () => {
     blogFormRef.current.toggleVisibility()
     blogService
       .create({ title: title,
-                author: author,
-                url: url })
+        author: author,
+        url: url })
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
         setSuccessMessage(`${returnedBlog.title} by ${returnedBlog.author} added`)
@@ -91,7 +91,7 @@ const App = () => {
         }, 5000)
       }).catch(error => {      // Handling of failure for person create
         setErrorMessage(
-        `Blog add failed: ${error}`
+          `Blog add failed: ${error}`
         )
         setTimeout(() => {
           setErrorMessage(null)
@@ -118,7 +118,7 @@ const App = () => {
         }, 5000)
       }).catch(error => {      // Handling of failure for person create
         setErrorMessage(
-        `Blog update failed: ${error}`
+          `Blog update failed: ${error}`
         )
         setTimeout(() => {
           setErrorMessage(null)
@@ -134,13 +134,12 @@ const App = () => {
         blogService.getAll().then(blogs =>
           setBlogs( blogs )
         )
-        blogs = blogs.filter(obj =>  obj !== returnedBlog)
         setTimeout(() => {
           setSuccessMessage(null)
         }, 5000)
       }).catch(error => {      // Handling of failure for person create
         setErrorMessage(
-        `Blog remove failed: ${error}`
+          `Blog remove failed: ${error}`
         )
         setTimeout(() => {
           setErrorMessage(null)
@@ -159,7 +158,7 @@ const App = () => {
         <form onSubmit={handleLogin}>
           <div>
             username
-              <input
+            <input
               type="text"
               value={username}
               name="Username"
@@ -171,7 +170,7 @@ const App = () => {
           </div>
           <div>
             password
-              <input
+            <input
               type="password"
               value={password}
               name="Password"

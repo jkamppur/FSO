@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import propTypes from 'prop-types'
 
 const Blog = ({ blog, addLike, removeBlog, userInfo }) => {
   const blogStyle = {
@@ -7,6 +8,13 @@ const Blog = ({ blog, addLike, removeBlog, userInfo }) => {
     border: 'solid',
     borderWidth: 1,
     marginBottom: 5
+  }
+
+  Blog.propTypes = {
+    blog: propTypes.object.isRequired,
+    addLike: propTypes.func.isRequired,
+    removeBlog: propTypes.func.isRequired,
+    userInfo: propTypes.object.isRequired
   }
 
   const [showDetails, setShowDetails] = useState(false)
@@ -29,11 +37,11 @@ const Blog = ({ blog, addLike, removeBlog, userInfo }) => {
 
   if (showDetails === false) {
     return (
-    <div style={blogStyle}>
-      <div>
-        {blog.title} <button onClick={toggleDetails}>view</button>
+      <div style={blogStyle}>
+        <div>
+          {blog.title} <button onClick={toggleDetails}>view</button>
+        </div>
       </div>
-    </div>
     )
   }
 
@@ -53,7 +61,7 @@ const Blog = ({ blog, addLike, removeBlog, userInfo }) => {
           {blog.author}
         </div>
         <div>
-           <button onClick={handleRemoveBlog}>Remove</button>
+          <button onClick={handleRemoveBlog}>Remove</button>
         </div>
       </div>
     )
