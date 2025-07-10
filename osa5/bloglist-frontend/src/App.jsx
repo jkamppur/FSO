@@ -106,7 +106,6 @@ const App = () => {
       url: url,
       likes: likes
     }
-    // Get ID for blog?
     blogService
       .put(newBlog, id)
       .then(returnedBlog => {
@@ -125,12 +124,33 @@ const App = () => {
           setErrorMessage(null)
         }, 5000)
       })
+  }
 
+  const handleRemoveBlog = (id) => {
+    blogService
+      .remove(id)
+      .then(returnedBlog => {
+        setSuccessMessage(`${returnedBlog.title} by ${returnedBlog.author} removed`)
+        blogService.getAll().then(blogs =>
+          setBlogs( blogs )
+        )
+        blogs = blogs.filter(obj =>  obj !== returnedBlog)
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
+      }).catch(error => {      // Handling of failure for person create
+        setErrorMessage(
+        `Blog remove failed: ${error}`
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      })
   }
 
 
-  if (user === null ) {
 
+  if (user === null ) {
     return (
       <div>
         <h2>Login</h2>
@@ -185,7 +205,7 @@ const App = () => {
       </Togglable>
       <h2/>
       {blogs.sort(compareLikes).map(blog =>
-        <Blog key={blog.id} blog={blog} addLike={handleUpdateBlog} />
+        <Blog key={blog.id} blog={blog} addLike={handleUpdateBlog} removeBlog={handleRemoveBlog} userInfo={user} />
       )}
     </div>
   )
