@@ -21,8 +21,6 @@ const Blog = ({ blog, addLike, removeBlog, userInfo }) => {
 
   const toggleDetails = () => {
     setShowDetails(!showDetails)
-    console.log(blog.userId[0].name)
-    console.log(userInfo.name)
   }
 
   const increaseLike = () => {
@@ -39,7 +37,7 @@ const Blog = ({ blog, addLike, removeBlog, userInfo }) => {
     return (
       <div style={blogStyle}>
         <div>
-          {blog.title} <button onClick={toggleDetails}>view</button>
+          {blog.title} {blog.author}<button onClick={toggleDetails}>view</button>
         </div>
       </div>
     )
