@@ -23,6 +23,12 @@ mongoose.connect(config.MONGODB_URI)
 
 app.use(cors())
 app.use(express.json())
+
+if (process.env.NODE_ENV === 'test') {
+  const testingRouter = require('./controllers/testing')
+  app.use('/api/testing', testingRouter)
+}
+
 app.use(middleware.tokenExtractor)
 app.use('/api/blogs', blogsRouter)  // Määrittelee polun jossa router kuuntelee
 app.use('/api/users', usersRouter)
