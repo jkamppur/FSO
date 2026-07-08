@@ -90,7 +90,6 @@ describe('Blog app', () => {
       await page.getByRole('button', { name: 'like' }).click()
 
       page.on('dialog', async dialog => {
-        console.log('Dialogi havaittu:', dialog.message());
         await dialog.accept(); // Painetaan OK
       });
 
