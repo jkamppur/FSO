@@ -14,7 +14,7 @@ const Blog = ({ blog, addLike, removeBlog, userInfo }) => {
     blog: propTypes.object.isRequired,
     addLike: propTypes.func.isRequired,
     removeBlog: propTypes.func.isRequired,
-    userInfo: propTypes.object.isRequired
+    // userInfo: propTypes.object.isRequired
   }
 
   const [showDetails, setShowDetails] = useState(false)
@@ -31,6 +31,10 @@ const Blog = ({ blog, addLike, removeBlog, userInfo }) => {
     if (window.confirm(`Remove Blog ${blog.title} by ${blog.author}`)) {
       removeBlog(blog.id)
     }
+  }
+
+  if (!blog) {
+    return null
   }
 
   if (showDetails === false) {

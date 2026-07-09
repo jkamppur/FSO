@@ -6,18 +6,21 @@ import ErrorNotification from './components/ErrorNotification'
 import SuccessNotification from './components/SuccessNotification'
 import AddNewBlog from './components/AddBlog'
 import Togglable from './components/Toggleable'
+import LoginMenuItem from './components/LoginMenuItem'
+import Login from './components/Login'
+import {
+  BrowserRouter as Router,
+  Routes, Route, Link, useNavigate
+} from 'react-router-dom'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   // notification
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
   // ref for togglable
   const blogFormRef = useRef()
-
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -35,45 +38,6 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
-
-
-  const handleLogin = async (event) => {
-    event.preventDefault()
-
-    try {
-      const user = await loginService.login({
-        username, password,
-      })
-
-      // Kirjautuneen käyttäjän tiedot tallentuvat nyt local storageen
-      window.localStorage.setItem(
-        'loggedBlogAppUser', JSON.stringify(user)
-      )
-      setUser(user)
-      setUsername('')
-      setPassword('')
-      blogService.setToken(user.token)
-      setSuccessMessage('user succesfully logged in')
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
-
-    } catch (exception) {
-      setErrorMessage('wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
-  }
-
-  const handleLogout = () => {
-    window.localStorage.removeItem('loggedBlogAppUser')
-    setUser(null)
-    setSuccessMessage('user succesfully logged out')
-    setTimeout(() => {
-      setSuccessMessage(null)
-    }, 5000)
-  }
 
   const handleAddNewBlog = (title, author, url) => {
     // Voimme nyt piilottaa lomakkeen kutsumalla blogFormRef.current.toggleVisibility()
@@ -147,66 +111,40 @@ const App = () => {
       })
   }
 
-
-
-  if (user === null ) {
-    return (
-      <div>
-        <h2>Login</h2>
-        <ErrorNotification message={errorMessage}/>
-        <SuccessNotification message={successMessage}/>
-        <form onSubmit={handleLogin}>
-          <div>
-            username
-            <input
-              type="text"
-              value={username}
-              name="Username"
-              // Muutoksenkäsittelijä on yksinkertainen, se destrukturoi
-              // parametrina tulevasta oliosta kentän target ja asettaa sen
-              // arvon vastaavaan tilaan
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </div>
-          <div>
-            password
-            <input
-              type="password"
-              value={password}
-              name="Password"
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <button type="submit">login</button>
-        </form>
-      </div>
-
-    )
-  }
-
   function compareLikes(a, b) {
     return b.likes - a.likes
   }
 
+  if(!blogs) {
+    return null
+  }
+
   return (
-    <div>
-      <h2>blogs
-      </h2>
-      <ErrorNotification message={errorMessage}/>
-      <SuccessNotification message={successMessage}/>
-      <p>{user.name} logged in
-        <button onClick={handleLogout}>
-          logout
-        </button>
-      </p>
-      <Togglable buttonLabel="add blog" ref={blogFormRef} >
-        <AddNewBlog handleAddNewBlog={handleAddNewBlog}/>
-      </Togglable>
-      <h2/>
-      {blogs.sort(compareLikes).map(blog =>
-        <Blog key={blog.id} blog={blog} addLike={handleUpdateBlog} removeBlog={handleRemoveBlog} userInfo={user} />
-      )}
-    </div>
+    <Router>
+      <div>
+        <Link to="/">blogs</Link>
+        &nbsp;
+        <LoginMenuItem user={user} setUser={setUser} setSuccessMessage={setSuccessMessage} />
+      </div>
+      <Routes>
+        <Route path="/" element={
+          <div>
+            <h2>blogs
+            </h2>
+            <ErrorNotification message={errorMessage}/>
+            <SuccessNotification message={successMessage}/>
+            <h2/>
+            {blogs.sort(compareLikes).map(blog =>
+              <Blog key={blog.id} blog={blog} addLike={handleUpdateBlog} removeBlog={handleRemoveBlog} userInfo={user} />
+            )}
+          </div>
+        } />
+
+        <Route path="/login" element={
+          <Login loginService={loginService} setUser={setUser} successMessage={successMessage} setSuccessMessage={setSuccessMessage} errorMessage={errorMessage} setErrorMessage={setErrorMessage} blogService={blogService}/>
+        } />
+      </Routes>
+    </Router>
   )
   // useRef hookilla luodaan ref noteFormRef, joka kiinnitetään muistiinpanojen luomislomakkeen
   // sisältävälle Togglable-komponentille. Nyt siis muuttuja noteFormRef toimii viitteenä komponenttiin.
