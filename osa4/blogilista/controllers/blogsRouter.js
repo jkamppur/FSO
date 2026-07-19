@@ -64,8 +64,9 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (request, response, n
   }
 
   try {
-    await Blog.findByIdAndDelete(request.params.id)
-    response.status(204).end()
+    const deletedBlog = await Blog.findByIdAndDelete(request.params.id)
+    response.json(deletedBlog)
+    // response.status(204).end()
 
   } catch(exception) {
     next(exception)

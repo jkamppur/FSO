@@ -1,10 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import ErrorNotification from './ErrorNotification'
-import SuccessNotification from './SuccessNotification'
 
 
-const Login = ({ loginService, setUser, successMessage, setSuccessMessage, errorMessage, setErrorMessage, blogService }) => {
+const Login = ({ loginService, setUser, setSuccessMessage, setErrorMessage, blogService }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
@@ -41,8 +39,6 @@ const Login = ({ loginService, setUser, successMessage, setSuccessMessage, error
 
     <div>
       <h2>Login</h2>
-      <ErrorNotification message={errorMessage}/>
-      <SuccessNotification message={successMessage}/>
       <form onSubmit={handleLogin}>
         <div>
           username

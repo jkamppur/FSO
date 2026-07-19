@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import userEvent from '@testing-library/user-event'
 import AddNewBlog from './AddBlog'
 
@@ -6,7 +7,12 @@ test('<AddBlog /> Calls handleAddNewBlog with correct parameters', async () => {
   const user = userEvent.setup()
   const handleAddNewBlog = vi.fn()
 
-  const { container } = render(<AddNewBlog handleAddNewBlog={handleAddNewBlog} />)
+  // useNavigate vaatii MemoryRouter käyttöä.
+  const { container } = render(
+    <MemoryRouter>
+      <AddNewBlog addBlog={handleAddNewBlog} />
+    </MemoryRouter>
+  )
 
   const titleInput = container.querySelector('#titleInput')
   const authorInput = container.querySelector('#authorInput')
@@ -17,6 +23,7 @@ test('<AddBlog /> Calls handleAddNewBlog with correct parameters', async () => {
   await user.type(titleInput, 'test title')
   await user.type(authorInput, 'test author')
   await user.type(urlInput, 'test url')
+
   await user.click(submitButton)
 
   expect(handleAddNewBlog.mock.calls).toHaveLength(1)

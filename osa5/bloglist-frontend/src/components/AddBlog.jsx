@@ -1,19 +1,22 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-const AddNewBlog = ({
-  handleAddNewBlog, // <-- destruktointi
-}) => {
+
+const AddNewBlog = ({ addBlog }) => {
 
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
 
-  const addBlog = async (event) => {
+  const navigate = useNavigate()
+
+  const addBlog2 = async (event) => {
     event.preventDefault()
-    handleAddNewBlog(title, author, url)
+    addBlog(title, author, url)
     setTitle('')
     setAuthor('')
     setUrl('')
+    navigate('/')
   }
 
   return (
@@ -22,7 +25,7 @@ const AddNewBlog = ({
 
       <h2>create new</h2>
 
-      <form onSubmit={addBlog}>
+      <form onSubmit={addBlog2}>
         <div>
               title:
           <input

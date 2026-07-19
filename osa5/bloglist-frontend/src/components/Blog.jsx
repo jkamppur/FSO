@@ -1,35 +1,39 @@
 import { useState } from 'react'
 import propTypes from 'prop-types'
+import { useParams, useNavigate } from 'react-router-dom'
 
-const Blog = ({ blog, addLike, removeBlog, userInfo }) => {
+
+const Blog = ({ blogs , userInfo, addLike, removeBlog,  }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
-    border: 'solid',
+    // border: 'solid',
     borderWidth: 1,
     marginBottom: 5
   }
 
+  const navigate = useNavigate()
+
+  const id = useParams().id
+  const blog=blogs.find(n => n.id === id)
+
+
   Blog.propTypes = {
-    blog: propTypes.object.isRequired,
+    blogs: propTypes.array.isRequired,
     addLike: propTypes.func.isRequired,
     removeBlog: propTypes.func.isRequired,
-    // userInfo: propTypes.object.isRequired
-  }
-
-  const [showDetails, setShowDetails] = useState(false)
-
-  const toggleDetails = () => {
-    setShowDetails(!showDetails)
+    userInfo: propTypes.object.isRequired
   }
 
   const increaseLike = () => {
+    console.log('add like next')
     addLike(blog.title, blog.author, blog.url, blog.likes + 1, blog.id)
   }
 
   const handleRemoveBlog = () => {
     if (window.confirm(`Remove Blog ${blog.title} by ${blog.author}`)) {
       removeBlog(blog.id)
+      navigate('/')
     }
   }
 
@@ -37,54 +41,24 @@ const Blog = ({ blog, addLike, removeBlog, userInfo }) => {
     return null
   }
 
-  if (showDetails === false) {
-    return (
-      <div style={blogStyle}>
-        <div>
-          {blog.title} {blog.author}<button onClick={toggleDetails}>view</button>
-        </div>
-      </div>
-    )
-  }
-
-  if (blog.userId[0].name === userInfo.name) {
-    return (
-      <div style={blogStyle}>
-        <div>
-          {blog.title} <button onClick={toggleDetails}>hide</button>
-        </div>
-        <div>
-          {blog.url}
-        </div>
-        <div>
-          likes {blog.likes} <button onClick={increaseLike}>like</button>
-        </div>
-        <div>
-          {blog.author}
-        </div>
-        <div>
-          <button onClick={handleRemoveBlog}>Remove</button>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div style={blogStyle}>
+      <h3>
+        {blog.author+': '+blog.title}
+      </h3>
+      <a href={'http://'+blog.url}>{blog.url}</a>
       <div>
-        {blog.title} <button onClick={toggleDetails}>hide</button>
+        likes {blog.likes} {userInfo?.name && <button onClick={increaseLike}>like</button>}
       </div>
       <div>
-        {blog.url}
+        added by {blog.userId[0].name}
       </div>
       <div>
-        likes {blog.likes} <button onClick={increaseLike}>like</button>
-      </div>
-      <div>
-        {blog.author}
+        {blog.userId[0].name === userInfo?.name && <button onClick={handleRemoveBlog}>Remove</button>}
       </div>
     </div>
   )
+
 }
 
 export default Blog

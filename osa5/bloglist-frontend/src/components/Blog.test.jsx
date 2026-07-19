@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 import Blog from './Blog'
 
 describe('<Blog />', () => {
@@ -20,46 +21,69 @@ describe('<Blog />', () => {
 
   let container
 
-  beforeEach(() => {
-    container = render(
-      <Blog blog={blog} userInfo={userInfo} removeBlog={mockHandler} addLike={mockHandler} />
-    ).container
-  })
+  // blogin tiedot sekä tykkäysten määrä näytetään kirjautumattomalle käyttäjälle, nappeja ei näytetä
 
-  test('render minimized blog content', () => {
+  test('null user doesn\'t see buttons', () => {
 
-    const element = screen.getByText('test blog Test Creator')
+
+    let container = render(
+      <MemoryRouter>
+        <Blog blogs={[blog]} userInfo={null} addLike={mockHandler} removeBlog={mockHandler}/>
+      </MemoryRouter>
+    )
+    const element = screen.getByText('Test Creator: test blog')
     expect(element).toBeDefined()
-    expect(element).not.toHaveTextContent('likes')
-  })
-
-  test('render detailed blog content', async () => {
-
-    const user = userEvent.setup()
-    const button = screen.getByText('view')
-    await user.click(button)
-
-    const element = screen.getByText('test blog')
-    expect(element).toBeDefined()
-    const element2 = screen.getByText('test url')
+    const element2 = screen.getByText('likes 100')
     expect(element2).toBeDefined()
-    const element3 = screen.getByText('likes 100')
-    expect(element3).toBeDefined()
-    const element4 = screen.getByText('Test Creator')
-    expect(element4).toBeDefined()
+    const likeButton = screen.queryByRole('button', { name: /like/i })
+    expect(likeButton).toBeNull()
+    const deleteButton = screen.queryByRole('button', { name: /delete/i })
+    expect(deleteButton).toBeNull()
   })
 
-  test('blog like button calls event handler correct count', async () => {
+  // kirjautuneelle käyttäjälle, joka ei ole blogin luoja näytetään ainoastaan tykkäysnappi
 
-    const user = userEvent.setup()
-    const button = screen.getByText('view')
-    await user.click(button)
+  test('log viewer see only like button', () => {
 
-    const likeButton = screen.getByText('like')
-    await user.click(likeButton)
-    expect(mockHandler.mock.calls).toHaveLength(1)
-    await user.click(likeButton)
-    expect(mockHandler.mock.calls).toHaveLength(2)
+    const userInfo = {
+      name: 'Blog viewer'
+    }
 
+    let container = render(
+      <MemoryRouter>
+        <Blog blogs={[blog]} userInfo={userInfo} addLike={mockHandler} removeBlog={mockHandler}/>
+      </MemoryRouter>
+    )
+
+    const element = screen.getByText('Test Creator: test blog')
+    expect(element).toBeDefined()
+    const element2 = screen.getByText('likes 100')
+    expect(element2).toBeDefined()
+    const likeButton = screen.queryByRole('button', { name: /like/i })
+    expect(likeButton).toBeDefined()
+    const deleteButton = screen.queryByRole('button', { name: /delete/i })
+    expect(deleteButton).toBeNull()
+  })
+
+  test('log adder see both buttons', () => {
+
+    const userInfo = {
+      name: 'Blog adder'
+    }
+
+    let container = render(
+      <MemoryRouter>
+        <Blog blogs={[blog]} userInfo={userInfo} addLike={mockHandler} removeBlog={mockHandler}/>
+      </MemoryRouter>
+    )
+
+    const element = screen.getByText('Test Creator: test blog')
+    expect(element).toBeDefined()
+    const element2 = screen.getByText('likes 100')
+    expect(element2).toBeDefined()
+    const likeButton = screen.queryByRole('button', { name: /like/i })
+    expect(likeButton).toBeDefined()
+    const deleteButton = screen.queryByRole('button', { name: /delete/i })
+    expect(deleteButton).toBeDefined()
   })
 })

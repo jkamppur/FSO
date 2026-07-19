@@ -8,6 +8,7 @@ import AddNewBlog from './components/AddBlog'
 import Togglable from './components/Toggleable'
 import LoginMenuItem from './components/LoginMenuItem'
 import Login from './components/Login'
+import BlogList from './components/BlogList'
 import {
   BrowserRouter as Router,
   Routes, Route, Link, useNavigate
@@ -42,14 +43,16 @@ const App = () => {
   const handleAddNewBlog = (title, author, url) => {
     // Voimme nyt piilottaa lomakkeen kutsumalla blogFormRef.current.toggleVisibility()
     // samalla kun uuden blogin luominen tapahtuu:
-    blogFormRef.current.toggleVisibility()
+    // blogFormRef.current.toggleVisibility()
     blogService
       .create({ title: title,
         author: author,
         url: url })
       .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
         setSuccessMessage(`${returnedBlog.title} by ${returnedBlog.author} added`)
+        blogService.getAll().then(blogs =>
+          setBlogs( blogs )
+        )
         setTimeout(() => {
           setSuccessMessage(null)
         }, 5000)
@@ -122,27 +125,31 @@ const App = () => {
   return (
     <Router>
       <div>
-        <Link to="/">blogs</Link>
-        &nbsp;
+        <Link to="/">blogs</Link> &nbsp;
+        {user && (
+          <>
+            <Link to="/addBlog">new_blog</Link> &nbsp;
+          </>
+        )}
         <LoginMenuItem user={user} setUser={setUser} setSuccessMessage={setSuccessMessage} />
       </div>
+      <ErrorNotification message={errorMessage}/>
+      <SuccessNotification message={successMessage}/>
+
       <Routes>
         <Route path="/" element={
-          <div>
-            <h2>blogs
-            </h2>
-            <ErrorNotification message={errorMessage}/>
-            <SuccessNotification message={successMessage}/>
-            <h2/>
-            {blogs.sort(compareLikes).map(blog =>
-              <Blog key={blog.id} blog={blog} addLike={handleUpdateBlog} removeBlog={handleRemoveBlog} userInfo={user} />
-            )}
-          </div>
+          <BlogList blogs={blogs}/>
         } />
-
         <Route path="/login" element={
           <Login loginService={loginService} setUser={setUser} successMessage={successMessage} setSuccessMessage={setSuccessMessage} errorMessage={errorMessage} setErrorMessage={setErrorMessage} blogService={blogService}/>
         } />
+        <Route path="/blogs/:id" element={
+          <Blog blogs={blogs} userInfo={user} addLike={handleUpdateBlog} removeBlog={handleRemoveBlog} />
+        } />
+        <Route path="/addBlog" element={
+          <AddNewBlog addBlog={handleAddNewBlog}/>
+        } />
+
       </Routes>
     </Router>
   )
