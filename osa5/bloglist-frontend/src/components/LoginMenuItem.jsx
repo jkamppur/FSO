@@ -1,22 +1,23 @@
 import { useNavigate, Link } from 'react-router-dom'
+import { Button } from '@mui/material'
 
-const LoginMenuItem = ({ user, setUser, setSuccessMessage }) => {
+const LoginMenuItem = ({ user, setUser, setNotification, style }) => {
   const navigate = useNavigate()
 
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
     setUser(null)
-    setSuccessMessage('user succesfully logged out')
+    setNotification({ text: 'user succesfully logged out', type: 'success' })
     setTimeout(() => {
-      setSuccessMessage(null)
+      setNotification(null)
     }, 5000)
     navigate('/')
   }
 
   if (user?.name) {
-    return ( <button onClick={handleLogout}> logout </button>)
+    return ( <Button color="inherit" onClick={handleLogout} sx={style}> logout </Button>)
   } else {
-    return <Link to="/login">login</Link>
+    return <Button color="inherit" component={Link} to="/login" sx={style}>login</Button>
   }
 }
 

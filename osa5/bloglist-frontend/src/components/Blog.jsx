@@ -1,22 +1,20 @@
 import { useState } from 'react'
 import propTypes from 'prop-types'
 import { useParams, useNavigate } from 'react-router-dom'
+import Card from '@mui/material/Card'
+import { CardContent, CardHeader, Typography, Button } from '@mui/material'
 
 
 const Blog = ({ blogs , userInfo, addLike, removeBlog,  }) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    // border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
+  const cardStyle={
+    marginTop: 5,
+    maxWidth: 400,
   }
 
   const navigate = useNavigate()
 
   const id = useParams().id
   const blog=blogs.find(n => n.id === id)
-
 
   Blog.propTypes = {
     blogs: propTypes.array.isRequired,
@@ -42,21 +40,25 @@ const Blog = ({ blogs , userInfo, addLike, removeBlog,  }) => {
   }
 
   return (
-    <div style={blogStyle}>
-      <h3>
-        {blog.author+': '+blog.title}
-      </h3>
-      <a href={'http://'+blog.url}>{blog.url}</a>
-      <div>
-        likes {blog.likes} {userInfo?.name && <button onClick={increaseLike}>like</button>}
-      </div>
-      <div>
-        added by {blog.userId[0].name}
-      </div>
-      <div>
-        {blog.userId[0].name === userInfo?.name && <button onClick={handleRemoveBlog}>Remove</button>}
-      </div>
-    </div>
+    <Card sx={cardStyle}>
+      <CardHeader title={blog.title}/>
+      <CardContent>
+        <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+          by {blog.author}
+        </Typography>
+        <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+          <a href={'http://'+blog.url}>{blog.url}</a>
+        </Typography>
+        <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 12 }}>
+          added by {blog.userId[0].name}
+        </Typography>
+        <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 12 }}>
+          {blog.likes} likes
+          {userInfo?.name && <Button variant="outlined" color="success" size="small" sx={{ ml: 2 }} onClick={increaseLike}>like</Button>}
+          {blog.userId[0].name === userInfo?.name && <Button variant="outlined" color="error" size="small" sx={{ ml: 1 }} onClick={handleRemoveBlog}>Remove</Button>}
+        </Typography>
+      </CardContent>
+    </Card>
   )
 
 }

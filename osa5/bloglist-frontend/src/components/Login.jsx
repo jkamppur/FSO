@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { TextField, Button } from '@mui/material'
 
-
-const Login = ({ loginService, setUser, setSuccessMessage, setErrorMessage, blogService }) => {
+const Login = ({ loginService, setUser, setNotification, blogService }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
@@ -22,30 +22,28 @@ const Login = ({ loginService, setUser, setSuccessMessage, setErrorMessage, blog
       setUsername('')
       setPassword('')
       blogService.setToken(user.token)
-      setSuccessMessage('user succesfully logged in')
+      setNotification({ text: 'user succesfully logged in', type: 'success' })
       navigate('/')
       setTimeout(() => {
-        setSuccessMessage(null)
+        setNotification(null)
       }, 5000)
     } catch (exception) {
-      setErrorMessage('wrong credentials')
+      setNotification({ text: 'wrong credentials', type: 'error' })
       setTimeout(() => {
-        setErrorMessage(null)
+        setNotification(null)
       }, 5000)
     }
   }
 
   return (
-
     <div>
-      <h2>Login</h2>
+      <h2>Login to application</h2>
       <form onSubmit={handleLogin}>
         <div>
-          username
-          <input
-            type="text"
+          <TextField
             value={username}
-            name="Username"
+            label="Username"
+            variant="standard"
             // Muutoksenkäsittelijä on yksinkertainen, se destrukturoi
             // parametrina tulevasta oliosta kentän target ja asettaa sen
             // arvon vastaavaan tilaan
@@ -53,15 +51,20 @@ const Login = ({ loginService, setUser, setSuccessMessage, setErrorMessage, blog
           />
         </div>
         <div>
-          password
-          <input
-            type="password"
+          <TextField
             value={password}
-            name="Password"
+            label="Password"
+            variant="standard"
+            type="password"
+            // Muutoksenkäsittelijä on yksinkertainen, se destrukturoi
+            // parametrina tulevasta oliosta kentän target ja asettaa sen
+            // arvon vastaavaan tilaan
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button type="submit">login</button>
+        <Button type="submit" variant="contained" style={{ marginTop: 10 }}>
+          login
+        </Button>
       </form>
     </div>
   )

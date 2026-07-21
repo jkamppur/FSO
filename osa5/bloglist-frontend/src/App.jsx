@@ -2,24 +2,23 @@ import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import ErrorNotification from './components/ErrorNotification'
-import SuccessNotification from './components/SuccessNotification'
 import AddNewBlog from './components/AddBlog'
 import Togglable from './components/Toggleable'
 import LoginMenuItem from './components/LoginMenuItem'
 import Login from './components/Login'
 import BlogList from './components/BlogList'
+import Notification from './components/Notification'
 import {
   BrowserRouter as Router,
   Routes, Route, Link, useNavigate
 } from 'react-router-dom'
+import { Container, AppBar, Toolbar, Button, Typography } from '@mui/material'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  // notification
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [successMessage, setSuccessMessage] = useState(null)
+  // Notification
+  const [notification, setNotification] = useState(null)
   // ref for togglable
   const blogFormRef = useRef()
 
@@ -49,19 +48,17 @@ const App = () => {
         author: author,
         url: url })
       .then(returnedBlog => {
-        setSuccessMessage(`${returnedBlog.title} by ${returnedBlog.author} added`)
+        setNotification({ text: `${returnedBlog.title} by ${returnedBlog.author} added`, type: 'success' })
         blogService.getAll().then(blogs =>
           setBlogs( blogs )
         )
         setTimeout(() => {
-          setSuccessMessage(null)
+          setNotification(null)
         }, 5000)
       }).catch(error => {      // Handling of failure for person create
-        setErrorMessage(
-          `Blog add failed: ${error}`
-        )
+        setNotification({ text: `Blog add failed: ${error}`, type: 'error' })
         setTimeout(() => {
-          setErrorMessage(null)
+          setNotification(null)
         }, 5000)
       })
   }
@@ -76,19 +73,17 @@ const App = () => {
     blogService
       .put(newBlog, id)
       .then(returnedBlog => {
-        setSuccessMessage(`${returnedBlog.title} by ${returnedBlog.author} updated`)
+        setNotification({ text: `${returnedBlog.title} by ${returnedBlog.author} updated`, type: 'success' })
         blogService.getAll().then(blogs =>
           setBlogs( blogs )
         )
         setTimeout(() => {
-          setSuccessMessage(null)
+          setNotification(null)
         }, 5000)
       }).catch(error => {      // Handling of failure for person create
-        setErrorMessage(
-          `Blog update failed: ${error}`
-        )
+        setNotification({ text: `Blog update failed: ${error}`, type: 'error' })
         setTimeout(() => {
-          setErrorMessage(null)
+          setNotification(null)
         }, 5000)
       })
   }
@@ -97,19 +92,17 @@ const App = () => {
     blogService
       .remove(id)
       .then(returnedBlog => {
-        setSuccessMessage(`${returnedBlog.title} by ${returnedBlog.author} removed`)
+        setNotification({ text: `${returnedBlog.title} by ${returnedBlog.author} removed`, type: 'success' })
         blogService.getAll().then(blogs =>
           setBlogs( blogs )
         )
         setTimeout(() => {
-          setSuccessMessage(null)
+          setNotification(null)
         }, 5000)
       }).catch(error => {      // Handling of failure for person create
-        setErrorMessage(
-          `Blog remove failed: ${error}`
-        )
+        setNotification({ text: `Blog remove failed: ${error}`, type: 'error' })
         setTimeout(() => {
-          setErrorMessage(null)
+          setNotification(null)
         }, 5000)
       })
   }
@@ -122,36 +115,44 @@ const App = () => {
     return null
   }
 
+  const style = { '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }
+
   return (
-    <Router>
-      <div>
-        <Link to="/">blogs</Link> &nbsp;
-        {user && (
-          <>
-            <Link to="/addBlog">new_blog</Link> &nbsp;
-          </>
-        )}
-        <LoginMenuItem user={user} setUser={setUser} setSuccessMessage={setSuccessMessage} />
-      </div>
-      <ErrorNotification message={errorMessage}/>
-      <SuccessNotification message={successMessage}/>
+    <Container>
+      <Router>
+        <div>
+          <AppBar position="static">
+            <Toolbar>
+              <Button color="inherit" component={Link} to="/" sx={style}>blogs</Button>
+              {user && <Button color="inherit"  component={Link} to="/addBlog" sx={style}>new blog</Button>}
+              <LoginMenuItem user={user} setUser={setUser} setNotification={setNotification} style={style} />
 
-      <Routes>
-        <Route path="/" element={
-          <BlogList blogs={blogs}/>
-        } />
-        <Route path="/login" element={
-          <Login loginService={loginService} setUser={setUser} successMessage={successMessage} setSuccessMessage={setSuccessMessage} errorMessage={errorMessage} setErrorMessage={setErrorMessage} blogService={blogService}/>
-        } />
-        <Route path="/blogs/:id" element={
-          <Blog blogs={blogs} userInfo={user} addLike={handleUpdateBlog} removeBlog={handleRemoveBlog} />
-        } />
-        <Route path="/addBlog" element={
-          <AddNewBlog addBlog={handleAddNewBlog}/>
-        } />
+              <Typography variant="h8" component="div" sx={{ flexGrow: 1, textAlign: 'right' }}>
+                Juha&apos;s Fullstackopen blog app
+              </Typography>
+            </Toolbar>
+          </AppBar>
 
-      </Routes>
-    </Router>
+
+        </div>
+        <Notification notification={notification} />
+        <Routes>
+          <Route path="/" element={
+            <BlogList blogs={blogs}/>
+          } />
+          <Route path="/login" element={
+            <Login loginService={loginService} setUser={setUser} setNotification={setNotification} blogService={blogService}/>
+          } />
+          <Route path="/blogs/:id" element={
+            <Blog blogs={blogs} userInfo={user} addLike={handleUpdateBlog} removeBlog={handleRemoveBlog} />
+          } />
+          <Route path="/addBlog" element={
+            <AddNewBlog addBlog={handleAddNewBlog}/>
+          } />
+
+        </Routes>
+      </Router>
+    </Container>
   )
   // useRef hookilla luodaan ref noteFormRef, joka kiinnitetään muistiinpanojen luomislomakkeen
   // sisältävälle Togglable-komponentille. Nyt siis muuttuja noteFormRef toimii viitteenä komponenttiin.
